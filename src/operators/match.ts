@@ -15,21 +15,36 @@ interface ClassType<T> {
  *
  * Syntax suggar for [filter](https://github.com/ReactiveX/rxjs/blob/master/src/operator/filter.ts)
  *
- * @example <caption>Router page change switch</caption>
- * class PageList { }
- * class PageDetails {
- *    constructor(id) {
- *      this.itemId = id;
+ * @example <caption>Show different errors after validation</caption>
+ * 
+ * // external, library or legacy validation code
+ * class NoHTTP {};
+ * class NoWWW {};
+ * class TooShort {
+ *    constructor(actualLength) {
+ *       this.actualLength = actualLength;
  *    }
  * }
- * var router$ = new ObservableRouter();
- * var listOpened$ = router$.match(PageList);
- * var detailsOpened$ = router$.match(PageDetails);
- * detailsOpened$.subscribe(function(pageDetails) {
- *    console.log('Details page opened with id: ', pageDetails.id);
- * });
+ * function validate(url) {
+ *    var errors = [];
+ *    if (!url.match(/^http/)) {
+ *        errors.push(new NoHTTP)
+ *    }
+ *    if (!url.match(/www/)) {
+ *        errors.push(new NoWWW);
+ *    }
+ *    if (
+ *    return errors;
+ * }
  *
-
+ * // form
+ * var keyup$ = Rx.Observable.fromEvent(input, 'keyup');
+ * var inputValidationErrors$ = keyup$.map(e => e.target.value).mergeMap(validate);
+ *
+ * var noHTTP$ = inputValidationErros$.match(TooShort);
+ * noHTTP$.subscribe(err => console.log('entered url too short. Actual length is ' + err.actualLength + ', but required 10');
+ *
+ *
  * @param {ClassType<T>} classType A class type by which
  * instanceof checks each value emitted by the source Observable.
  * @param {any} [thisArg] An optional argument to determine the value of `this`
